@@ -1,0 +1,16 @@
+ # macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS trash
+.Trashes
+
+# macOS Spotlight files
+.Spotlight-V100
+
+# macOS volume info
+.VolumeIcon.icns
+
+# macOS resource fork
+._*
