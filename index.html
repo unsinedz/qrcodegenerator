@@ -69,74 +69,77 @@
   </div>
   <div id="qr"></div>
   <script>
-    const fgColor = document.getElementById('qr-foreground');
-    const fgText = document.getElementById('qr-foreground-text');
-    const bgColor = document.getElementById('qr-background');
-    const bgText = document.getElementById('qr-background-text');
-    const bgTransparent = document.getElementById('qr-bg-transparent');
+    const htmlElements = {
+      fgColor: document.getElementById('qr-foreground'),
+      fgText: document.getElementById('qr-foreground-text'),
+      bgColor: document.getElementById('qr-background'),
+      bgText: document.getElementById('qr-background-text'),
+      bgTransparent: document.getElementById('qr-bg-transparent'),
+      data: document.getElementById('qr-data'),
+      dots: document.getElementById('qr-dots'),
+      corners: document.getElementById('qr-corners'),
+      cornerDots: document.getElementById('qr-corner-dots'),
+      downloadPng: document.getElementById('download-png'),
+      downloadSvg: document.getElementById('download-svg'),
+      qr: document.getElementById('qr'),
+    };
 
-    let lastBgColor = bgColor.value;
-    let lastBgText = bgText.value;
+    let lastBgColor = htmlElements.bgColor.value;
+    let lastBgText = htmlElements.bgText.value;
 
-    // Sync color pickers and text fields
-    fgColor.addEventListener('input', () => {
-      fgText.value = fgColor.value;
-      updateQR();
+    // Sync color pickers and text fields (no updateQR calls here)
+    htmlElements.fgColor.addEventListener('input', () => {
+      htmlElements.fgText.value = htmlElements.fgColor.value;
     });
-    fgText.addEventListener('input', () => {
-      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(fgText.value) || /^#([0-9a-fA-F]{3})$/.test(fgText.value)) {
-        fgColor.value = fgText.value;
-        updateQR();
+    htmlElements.fgText.addEventListener('input', () => {
+      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(htmlElements.fgText.value) || /^#([0-9a-fA-F]{3})$/.test(htmlElements.fgText.value)) {
+        htmlElements.fgColor.value = htmlElements.fgText.value;
       }
     });
-    bgColor.addEventListener('input', () => {
-      bgText.value = bgColor.value;
-      lastBgColor = bgColor.value;
-      lastBgText = bgText.value;
-      updateQR();
+    htmlElements.bgColor.addEventListener('input', () => {
+      htmlElements.bgText.value = htmlElements.bgColor.value;
+      lastBgColor = htmlElements.bgColor.value;
+      lastBgText = htmlElements.bgText.value;
     });
-    bgText.addEventListener('input', () => {
-      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(bgText.value) || /^#([0-9a-fA-F]{3})$/.test(bgText.value)) {
-        bgColor.value = bgText.value;
-        lastBgColor = bgColor.value;
-        lastBgText = bgText.value;
-        updateQR();
+    htmlElements.bgText.addEventListener('input', () => {
+      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(htmlElements.bgText.value) || /^#([0-9a-fA-F]{3})$/.test(htmlElements.bgText.value)) {
+        htmlElements.bgColor.value = htmlElements.bgText.value;
+        lastBgColor = htmlElements.bgColor.value;
+        lastBgText = htmlElements.bgText.value;
       }
     });
-    bgTransparent.addEventListener('change', () => {
-      if (bgTransparent.checked) {
-        bgColor.disabled = true;
-        bgText.disabled = true;
-        bgColor.value = '#000000';
-        bgText.value = '#00000000';
-        updateQR();
+    htmlElements.bgTransparent.addEventListener('change', () => {
+      if (htmlElements.bgTransparent.checked) {
+        htmlElements.bgColor.disabled = true;
+        htmlElements.bgText.disabled = true;
+        htmlElements.bgColor.value = '#000000';
+        htmlElements.bgText.value = '#00000000';
       } else {
-        bgColor.disabled = false;
-        bgText.disabled = false;
-        bgColor.value = lastBgColor;
-        bgText.value = lastBgText;
-        updateQR();
+        htmlElements.bgColor.disabled = false;
+        htmlElements.bgText.disabled = false;
+        htmlElements.bgColor.value = lastBgColor;
+        htmlElements.bgText.value = lastBgText;
       }
     });
 
     const qrCode = new window.QRCodeStyling({
       width: 300,
       height: 300,
-      data: document.getElementById('qr-data').value,
+      data: htmlElements.data.value,
       image: '',
       dotsOptions: {
-        color: fgColor.value,
+        color: htmlElements.fgColor.value,
         type: 'dots',
       },
       backgroundOptions: {
-        color: bgText.value,
+        color: htmlElements.bgText.value,
       },
       cornersSquareOptions: {
-        color: fgColor.value,
+        color: htmlElements.fgColor.value,
         type: 'extra-rounded',
       },
       cornersDotOptions: {
-        color: fgColor.value,
+        color: htmlElements.fgColor.value,
         type: 'dot',
       },
       qrOptions: {
@@ -144,37 +147,47 @@
       },
     });
 
-    qrCode.append(document.getElementById('qr'));
+    qrCode.append(htmlElements.qr);
 
     function updateQR() {
       qrCode.update({
-        data: document.getElementById('qr-data').value,
+        data: htmlElements.data.value,
         dotsOptions: {
-          color: fgColor.value,
-          type: document.getElementById('qr-dots').value,
+          color: htmlElements.fgColor.value,
+          type: htmlElements.dots.value,
         },
         backgroundOptions: {
-          color: bgTransparent.checked ? '#00000000' : bgText.value,
+          color: htmlElements.bgTransparent.checked ? '#00000000' : htmlElements.bgText.value,
         },
         cornersSquareOptions: {
-          color: fgColor.value,
-          type: document.getElementById('qr-corners').value,
+          color: htmlElements.fgColor.value,
+          type: htmlElements.corners.value,
         },
         cornersDotOptions: {
-          color: fgColor.value,
-          type: document.getElementById('qr-corner-dots').value,
+          color: htmlElements.fgColor.value,
+          type: htmlElements.cornerDots.value,
         },
       });
     }
 
     document.addEventListener('DOMContentLoaded', updateQR);
-    document.getElementById('qr-data').addEventListener('input', updateQR);
-    document.getElementById('qr-dots').addEventListener('change', updateQR);
-    document.getElementById('qr-corners').addEventListener('change', updateQR);
-    document.getElementById('qr-corner-dots').addEventListener('change', updateQR);
+    [
+      htmlElements.data,
+      htmlElements.fgColor,
+      htmlElements.fgText,
+      htmlElements.bgColor,
+      htmlElements.bgText,
+      htmlElements.bgTransparent,
+      htmlElements.dots,
+      htmlElements.corners,
+      htmlElements.cornerDots
+    ].forEach(el => {
+      el.addEventListener('input', updateQR);
+      el.addEventListener('change', updateQR);
+    });
 
-    document.getElementById('download-png').onclick = () => qrCode.download({ name: 'qr-code', extension: 'png' });
-    document.getElementById('download-svg').onclick = () => qrCode.download({ name: 'qr-code', extension: 'svg' });
+    htmlElements.downloadPng.onclick = () => qrCode.download({ name: 'qr-code', extension: 'png' });
+    htmlElements.downloadSvg.onclick = () => qrCode.download({ name: 'qr-code', extension: 'svg' });
   </script>
 </body>
 </html> 
