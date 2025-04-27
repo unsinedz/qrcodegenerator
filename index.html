@@ -12,14 +12,25 @@
     #qr { background: #222; padding: 1rem; border-radius: 1rem; }
     button { padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; background: #FBD5A8; color: #222; font-weight: bold; cursor: pointer; }
     button:hover { background: #ffe0b8; }
+    input[type="text"] { font-family: monospace; }
   </style>
 </head>
 <body>
   <h1>Custom QR Code Generator</h1>
   <div class="controls">
     <label>Text/URL: <input id="qr-data" type="text" value="https://example.com" size="40"></label>
-    <label>Foreground: <input id="qr-foreground" type="color" value="#FBD5A8"></label>
-    <label>Background: <input id="qr-background" type="color" value="#222222"></label>
+    <label>
+      Foreground:
+      <input id="qr-foreground" type="color" value="#FBD5A8">
+      <input id="qr-foreground-text" type="text" value="#FBD5A8" size="8" maxlength="9" style="width:90px;">
+    </label>
+    <label>
+      Background:
+      <input id="qr-background" type="color" value="#000000ff">
+      <input id="qr-background-text" type="text" value="#000000ff" size="8" maxlength="9" style="width:90px;">
+      <input id="qr-bg-transparent" type="checkbox" style="margin-left:1em;">
+      <span style="font-size:0.95em;">Transparent background</span>
+    </label>
     <label>Inner dot style:
       <select id="qr-dots">
         <option value="extra-rounded">Squircle (extra-rounded)</option>
@@ -58,24 +69,74 @@
   </div>
   <div id="qr"></div>
   <script>
+    const fgColor = document.getElementById('qr-foreground');
+    const fgText = document.getElementById('qr-foreground-text');
+    const bgColor = document.getElementById('qr-background');
+    const bgText = document.getElementById('qr-background-text');
+    const bgTransparent = document.getElementById('qr-bg-transparent');
+
+    let lastBgColor = bgColor.value;
+    let lastBgText = bgText.value;
+
+    // Sync color pickers and text fields
+    fgColor.addEventListener('input', () => {
+      fgText.value = fgColor.value;
+      updateQR();
+    });
+    fgText.addEventListener('input', () => {
+      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(fgText.value) || /^#([0-9a-fA-F]{3})$/.test(fgText.value)) {
+        fgColor.value = fgText.value;
+        updateQR();
+      }
+    });
+    bgColor.addEventListener('input', () => {
+      bgText.value = bgColor.value;
+      lastBgColor = bgColor.value;
+      lastBgText = bgText.value;
+      updateQR();
+    });
+    bgText.addEventListener('input', () => {
+      if (/^#([0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(bgText.value) || /^#([0-9a-fA-F]{3})$/.test(bgText.value)) {
+        bgColor.value = bgText.value;
+        lastBgColor = bgColor.value;
+        lastBgText = bgText.value;
+        updateQR();
+      }
+    });
+    bgTransparent.addEventListener('change', () => {
+      if (bgTransparent.checked) {
+        bgColor.disabled = true;
+        bgText.disabled = true;
+        bgColor.value = '#000000';
+        bgText.value = '#00000000';
+        updateQR();
+      } else {
+        bgColor.disabled = false;
+        bgText.disabled = false;
+        bgColor.value = lastBgColor;
+        bgText.value = lastBgText;
+        updateQR();
+      }
+    });
+
     const qrCode = new window.QRCodeStyling({
       width: 300,
       height: 300,
       data: document.getElementById('qr-data').value,
       image: '',
       dotsOptions: {
-        color: document.getElementById('qr-foreground').value,
+        color: fgColor.value,
         type: 'dots',
       },
       backgroundOptions: {
-        color: document.getElementById('qr-background').value,
+        color: bgText.value,
       },
       cornersSquareOptions: {
-        color: document.getElementById('qr-foreground').value,
+        color: fgColor.value,
         type: 'extra-rounded',
       },
       cornersDotOptions: {
-        color: document.getElementById('qr-foreground').value,
+        color: fgColor.value,
         type: 'dot',
       },
       qrOptions: {
@@ -89,18 +150,18 @@
       qrCode.update({
         data: document.getElementById('qr-data').value,
         dotsOptions: {
-          color: document.getElementById('qr-foreground').value,
+          color: fgColor.value,
           type: document.getElementById('qr-dots').value,
         },
         backgroundOptions: {
-          color: document.getElementById('qr-background').value,
+          color: bgTransparent.checked ? '#00000000' : bgText.value,
         },
         cornersSquareOptions: {
-          color: document.getElementById('qr-foreground').value,
+          color: fgColor.value,
           type: document.getElementById('qr-corners').value,
         },
         cornersDotOptions: {
-          color: document.getElementById('qr-foreground').value,
+          color: fgColor.value,
           type: document.getElementById('qr-corner-dots').value,
         },
       });
@@ -108,8 +169,6 @@
 
     document.addEventListener('DOMContentLoaded', updateQR);
     document.getElementById('qr-data').addEventListener('input', updateQR);
-    document.getElementById('qr-foreground').addEventListener('input', updateQR);
-    document.getElementById('qr-background').addEventListener('input', updateQR);
     document.getElementById('qr-dots').addEventListener('change', updateQR);
     document.getElementById('qr-corners').addEventListener('change', updateQR);
     document.getElementById('qr-corner-dots').addEventListener('change', updateQR);
