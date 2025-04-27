@@ -13,6 +13,8 @@
     button { padding: 0.5rem 1rem; border-radius: 0.5rem; border: none; background: #FBD5A8; color: #222; font-weight: bold; cursor: pointer; }
     button:hover { background: #ffe0b8; }
     input[type="text"] { font-family: monospace; }
+    footer { margin-top: 2rem; color: #aaa; font-size: 0.95em; }
+    footer a { color: #FBD5A8; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -68,6 +70,10 @@
     <button id="download-svg">Download SVG</button>
   </div>
   <div id="qr"></div>
+  <footer>
+    This project uses qr-code-styling library. License available at:
+    <a href="https://raw.githubusercontent.com/kozakdenys/qr-code-styling/master/LICENSE" target="_blank" rel="noopener">link</a>
+  </footer>
   <script>
     const htmlElements = {
       fgColor: document.getElementById('qr-foreground'),
